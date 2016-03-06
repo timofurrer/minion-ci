@@ -1,5 +1,5 @@
 """
-    `deci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
+    `minion-ci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
 
     This module contains the database configuration.
 
@@ -14,5 +14,5 @@ def get_db():
 
 # TODO: read from configuration file
 settings = {
-    "MONGODB_SETTINGS": {"DB": "deci"}
+    "MONGODB_SETTINGS": {"DB": "minion-ci"}
 }

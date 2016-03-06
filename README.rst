@@ -1,12 +1,12 @@
-deci
-====
+minion-ci
+=========
 
-**deci** is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
+**minion-ci** is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
 
 Installation
 ------------
 
-To persist the job data *deci* uses MongoDB. Make sure you have a MongoDB instance running or install
+To persist the job data *minion-ci* uses MongoDB. Make sure you have a MongoDB instance running or install
 it with your package manager:
 
 .. code::
@@ -14,13 +14,13 @@ it with your package manager:
     apt-get install mongodb
     yum install mongodb
 
-It's recommended to use pip to install deci:
+It's recommended to use pip to install minion-ci:
 
 .. code::
 
-    pip3 install deci
+    pip3 install minion-ci
 
 Stack
 -----
 
-**deci** is built on top of flask and uses a MongoDB to persist jobs.
+**minion-ci** is built on top of flask and uses a MongoDB to persist jobs.

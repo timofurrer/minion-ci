@@ -1,5 +1,5 @@
 """
-    `deci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
+    `minion-ci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
 
     This module contains the models to persist CI job data.
 
@@ -21,7 +21,7 @@ class Result(db.Document):  # pylint: disable=no-init,too-few-public-methods
 
 
 class Job(db.Document):  # pylint: disable=no-init,too-few-public-methods
-    """Document to store a single deci job."""
+    """Document to store a single minion-ci job."""
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
     repository_url = db.StringField(required=True)
     commit_hash = db.StringField(required=True)

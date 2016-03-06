@@ -1,7 +1,7 @@
 """
-    `deci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
+    `minion-ci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
 
-    This module launches the deci server.
+    This module launches the minion-ci server.
 
     :copyright: (c) by Timo Furrer
     :license: MIT, see LICENSE for details
@@ -14,7 +14,7 @@ from .app import app
 
 @click.command()
 def main():
-    """Manage deci server."""
+    """Manage minion-ci server."""
     app.run(debug=True)
 
 

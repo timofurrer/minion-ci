@@ -1,7 +1,7 @@
 """
-    `deci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
+    `minion-ci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
 
-    This module contains the core functionality for the deci server.
+    This module contains the core functionality for the minion-ci server.
 
     :copyright: (c) by Timo Furrer
     :license: MIT, see LICENSE for details

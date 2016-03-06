@@ -1,7 +1,7 @@
 """
-    `deci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
+    `minion-ci` is a minimalist, decentralized, flexible Continuous Integration Server for hackers.
 
-    This module contains the routes for the deci API.
+    This module contains the routes for the minion-ci API.
 
     :copyright: (c) by Timo Furrer
     :license: MIT, see LICENSE for details
@@ -23,7 +23,7 @@ def index():
 
 @api.route("/status", methods=["GET"])
 def get_status():
-    """Get status of deci."""
+    """Get status of the minion server."""
     status = {
         "queue": {
             "size": workers.queue.qsize()

@@ -7,7 +7,7 @@ __pycache__/
 
 # setuptools files
 dist/
-deci.egg-info/
+minion.egg-info/
 
 # python virtualenv
 env/

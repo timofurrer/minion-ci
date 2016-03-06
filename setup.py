@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Setup deci package.
+    Setup minion-ci package.
 
     Only support Python versions > 3.4.1
 """
@@ -14,20 +14,20 @@ from setuptools import setup, find_packages
 from pip.req import parse_requirements
 
 if sys.version_info < (3, 4, 1):
-    raise RuntimeError("deci requires Python 3.4.1+")
+    raise RuntimeError("minion-ci requires Python 3.4.1+")
 
 
 def get_version():
     """Gets the current version"""
     _version_re = re.compile(r"__VERSION__\s+=\s+(.*)")
-    with open("deci/__init__.py", "rb") as init_file:
+    with open("minion/__init__.py", "rb") as init_file:
         version = str(ast.literal_eval(_version_re.search(
             init_file.read().decode("utf-8")).group(1)))
     return version
 
 
 setup(
-    name="deci",
+    name="minion-ci",
     version=get_version(),
     license="MIT",
 
@@ -37,7 +37,7 @@ setup(
     author="Timo Furrer",
     author_email="tuxtimo@gmail.com",
 
-    url="https://github.com/timofurrer/deci",
+    url="https://github.com/timofurrer/minion-ci",
 
     packages=find_packages(),
     include_package_data=True,
@@ -45,11 +45,11 @@ setup(
     install_requires=list(x.name for x in parse_requirements("./requirements.txt")),
 
     entry_points={
-        "console_scripts": ["deci-server=deci.server.__main__:main"]
+        "console_scripts": ["minion-server=minion.server.__main__:main"]
     },
 
     keywords=[
-        "deci",
+        "minion-ci",
         "minimalist", "simple", "flexible", "decentral",
         "ci", "continuous integration", "server",
         "git", "github",
