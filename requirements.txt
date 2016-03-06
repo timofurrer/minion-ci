@@ -2,3 +2,4 @@ click
 mongoengine
 flask
 flask-mongoengine
+PyYAML

@@ -17,6 +17,9 @@ app = Flask(__name__)
 app.register_blueprint(api)
 app.config.update(settings)
 
+# initialize mongodb engine for use in flask
 db = get_db()
 db.init_app(app)
+
+# initilize worker pool and job queue
 workers.init_app(app)

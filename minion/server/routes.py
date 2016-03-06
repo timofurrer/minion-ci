@@ -8,6 +8,7 @@
 """
 
 from flask import Blueprint, request, jsonify
+import mongoengine
 
 from .models import Job
 from .core import workers
@@ -62,6 +63,13 @@ def create_job():
     return jsonify({"status": True})
 
 
+@api.route("/jobs", methods=["DELETE"])
+def delete_jobs():
+    """Delete all jobs."""
+    Job.drop_collection()
+    return jsonify({"status": True})
+
+
 @api.route("/jobs/<job_id>", methods=["POST"])
 def update_job(job_id):
     """Update a specific job."""
@@ -71,4 +79,10 @@ def update_job(job_id):
 @api.route("/jobs/<job_id>", methods=["DELETE"])
 def delete_job(job_id):
     """Delete a specific job."""
-    pass
+    try:
+        job = Job.objects.get(id=job_id)
+    except mongoengine.errors.ValidationError:
+        return jsonify({"status": False, "msg": "No such job id found: {0}".format(job_id)})
+    else:
+        job.delete()
+        return jsonify({"status": True})
