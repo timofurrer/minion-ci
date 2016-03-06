@@ -11,8 +11,3 @@ from flask.ext.mongoengine import MongoEngine
 
 def get_db():
     return MongoEngine()
-
-# TODO: read from configuration file
-settings = {
-    "MONGODB_SETTINGS": {"DB": "minion-ci"}
-}

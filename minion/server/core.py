@@ -15,6 +15,7 @@ from subprocess import Popen, PIPE, STDOUT
 
 from .database import get_db
 from .models import Job, Result
+from ..parser import parse
 from ..errors import MinionError
 
 class WorkersExtension:
@@ -27,7 +28,7 @@ class WorkersExtension:
 
     def init_app(self, app):
         queue = Queue()
-        pool = Pool(1, worker, (queue,))
+        pool = Pool(1, worker, (queue, app.config))
         self._app_cache[app] = {
             "queue": queue,
             "pool": pool
@@ -46,7 +47,7 @@ class WorkersExtension:
 workers = WorkersExtension()
 
 
-def worker(queue):
+def worker(queue, config):
     """Single worker to process jobs from the given queue."""
     print("Launched worker:", os.getpid())
     get_db()
@@ -58,12 +59,12 @@ def worker(queue):
         job = Job(**job_task)
         job.save()
 
-        process(job)
+        process(job, config)
 
         print("Processed job task:", job_task)
 
 
-def process(job):
+def process(job, config):
     """
         Process the given job.
 
@@ -76,9 +77,11 @@ def process(job):
     result = Result()
     logs = ""
 
+    local_repo_path = os.path.join(config["JOB_DATAPATH"], str(job.id))
+
     try:
         # clone the git repository
-        git_clone = Popen(["git", "clone", job.repository_url, job.local_repo_path], stdout=PIPE, stderr=STDOUT)
+        git_clone = Popen(["git", "clone", job.repository_url, local_repo_path], stdout=PIPE, stderr=STDOUT)
         tmp_stdout, _ = git_clone.communicate()
         logs += tmp_stdout.decode("utf-8")
         if git_clone.returncode != 0:
@@ -88,17 +91,18 @@ def process(job):
         if job.commit_hash or job.branch:
             # reset git repository to the defined hash or if not given branch
             revision = job.commit_hash if job.commit_hash else job.branch
-            git_reset = Popen(["git", "reset", "--hard", revision], stdout=PIPE, stderr=STDOUT)
+            git_reset = Popen(["git", "reset", "--hard", revision],
+                              cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = git_reset.communicate()
             logs += tmp_stdout.decode("utf-8")
             if git_reset.returncode != 0:
                 raise MinionError("Failed to reset repository to {0}".format(revision))
 
-        config = job.config
+        config = parse(os.path.join(local_repo_path, job.config_file))
 
         if "before_run" in config:
             before_run = Popen(config["before_run"], shell=True,
-                               cwd=job.local_repo_path, stdout=PIPE, stderr=STDOUT)
+                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = before_run.communicate()
             logs += tmp_stdout.decode("utf-8")
             if before_run.returncode != 0:
@@ -106,7 +110,7 @@ def process(job):
 
         if "command" in config:
             command_run = Popen(config["command"], shell=True,
-                                cwd=job.local_repo_path, stdout=PIPE, stderr=STDOUT)
+                                cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = command_run.communicate()
             logs += tmp_stdout.decode("utf-8")
             if command_run.returncode != 0:
@@ -114,7 +118,7 @@ def process(job):
 
         if "after_run" in config:
             after_run = Popen(config["after_run"], shell=True,
-                              cwd=job.local_repo_path, stdout=PIPE, stderr=STDOUT)
+                              cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = after_run.communicate()
             logs += tmp_stdout.decode("utf-8")
             if after_run.returncode != 0:

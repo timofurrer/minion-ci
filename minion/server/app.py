@@ -7,15 +7,34 @@
     :license: MIT, see LICENSE for details
 """
 
-from flask import Flask, g
+import os
+import click
+import yaml
+from flask import Flask
 
-from .database import get_db, settings
+from .database import get_db
 from .routes import api
 from .core import workers
 
+# default configuration settings
+MONGODB_SETTINGS = {"DB": "minion-ci"}
+APPLICATION_DATAPATH = click.get_app_dir("minion-ci")
+JOB_DATAPATH = os.path.join(APPLICATION_DATAPATH, "jobs")
+DEFAULT_CONFIGURATION_FILE = os.path.join(APPLICATION_DATAPATH, "server-config.yml")
+
+def parse_config(path):
+    """Parse minion-ci server configuration file."""
+    with open(path) as config_file:
+        return yaml.load(config_file)
+
 app = Flask(__name__)
 app.register_blueprint(api)
-app.config.update(settings)
+app.config.from_object(__name__)
+
+try:
+    app.config.update(parse_config(DEFAULT_CONFIGURATION_FILE))
+except FileNotFoundError:
+    pass
 
 # initialize mongodb engine for use in flask
 db = get_db()

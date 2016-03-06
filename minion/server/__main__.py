@@ -9,12 +9,17 @@
 
 import click
 
-from .app import app
+from .app import app, parse_config
 
 
 @click.command()
-def main():
+@click.option("-c", "--config",
+              help="Path to configuration file.")
+def main(config):
     """Manage minion-ci server."""
+    if config:
+        app.config.update(parse_config(config))
+
     app.run(debug=True)
 
 

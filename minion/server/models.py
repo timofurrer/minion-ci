@@ -11,7 +11,6 @@ import os
 import datetime
 
 from .database import get_db
-from ..parser import parse
 
 db = get_db()
 
@@ -33,17 +32,4 @@ class Job(db.Document):  # pylint: disable=no-init,too-few-public-methods
     attributes = db.DictField()
     result = db.EmbeddedDocumentField(Result)
 
-    @property
-    def local_repo_path(self):
-        """Returns the path to the local clone of the repository."""
-        return os.path.join("jobs", str(self.id))
-
-    @property
-    def config_file(self):
-        """Discovers the minion config file."""
-        return os.path.join(self.local_repo_path, "minion.yml")
-
-    @property
-    def config(self):
-        """Returns the parsed minion config."""
-        return parse(self.config_file)
+    config_file = "minion.yml"
