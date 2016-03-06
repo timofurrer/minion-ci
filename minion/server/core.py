@@ -9,6 +9,7 @@
 
 import os
 import io
+import shutil
 from flask import current_app
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
@@ -52,19 +53,20 @@ def worker(queue, config):
     print("Launched worker:", os.getpid())
     get_db()
     while True:
-        job_task = queue.get(True)
-        print("Got job task:", job_task)
+        job_data = queue.get(True)
 
         # insert job into database
-        job = Job(**job_task)
+        job = Job()
+        job.repository_url = job_data["repository_url"]
+        job.commit_hash = job_data["commit_hash"]
+        job.branch = job_data["branch"]
+        job.attributes = job_data["attributes"]
         job.save()
 
-        process(job, config)
-
-        print("Processed job task:", job_task)
+        process(job, config, job_data["keep_data"])
 
 
-def process(job, config):
+def process(job, config, keep_data):
     """
         Process the given job.
 
@@ -88,15 +90,20 @@ def process(job, config):
             raise MinionError("Failed to clone git repository from {0} to {1}".format(
                 job.repository_url, job.local_repo_path))
 
-        if job.commit_hash or job.branch:
-            # reset git repository to the defined hash or if not given branch
-            revision = job.commit_hash if job.commit_hash else job.branch
-            git_reset = Popen(["git", "reset", "--hard", revision],
+        if job.commit_hash:
+            git_reset = Popen(["git", "reset", "--hard", job.commit_hash],
                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = git_reset.communicate()
             logs += tmp_stdout.decode("utf-8")
             if git_reset.returncode != 0:
-                raise MinionError("Failed to reset repository to {0}".format(revision))
+                raise MinionError("Failed to reset repository to {0}".format(job.commit_hash))
+        elif job.branch:
+            git_checkout = Popen(["git", "checkout", job.branch],
+                                 cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
+            tmp_stdout, _ = git_checkout.communicate()
+            logs += tmp_stdout.decode("utf-8")
+            if git_checkout.returncode != 0:
+                raise MinionError("Failed to checkout branch {0}".format(job.branch))
 
         config = parse(os.path.join(local_repo_path, job.config_file))
 
@@ -133,3 +140,6 @@ def process(job, config):
 
         job.result = result
         job.save()
+
+        if not keep_data:
+            shutil.rmtree(local_repo_path)

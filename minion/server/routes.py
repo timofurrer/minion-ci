@@ -54,10 +54,11 @@ def create_job():
     """Create a new job"""
     data = request.json
     job = {
-        "repository_url": data.get("repo_url"),
-        "commit_hash": data.get("commit_hash"),
-        "branch": data.get("branch"),
-        "attributes": data.get("attributes")
+        "repository_url": data.pop("repo_url", None),
+        "commit_hash": data.pop("commit_hash", None),
+        "branch": data.pop("branch", None),
+        "keep_data": data.pop("keep_data", False),
+        "attributes": data
     }
     workers.queue.put(job)
     return jsonify({"status": True})
