@@ -1,0 +1,4 @@
+click
+mongoengine
+flask
+flask-mongoengine
