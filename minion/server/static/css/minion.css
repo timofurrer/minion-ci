@@ -44,6 +44,8 @@ li.job span.time {
 li.job span.repository_url {
     margin-left: 40px;
     color: #666666;
+    display: inline-block;
+    width: 40%;
 }
 
 li.job span.revision {

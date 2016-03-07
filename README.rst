@@ -8,13 +8,26 @@ minion-ci
 Installation
 ------------
 
-To persist the job data *minion-ci* uses MongoDB. Make sure you have a MongoDB instance running or install
-it with your package manager:
+To persist the job data *minion-ci* uses MongoDB.
+
+Make sure you have MongoDB installed ...
 
 .. code::
 
     apt-get install mongodb
     yum install mongodb
+
+... and an instance is running:
+
+.. code::
+
+    ps -ef | grep mongod
+
+... eventually start one with:
+
+.. code::
+
+    mongod
 
 It's recommended to use pip to install minion-ci:
 
