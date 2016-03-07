@@ -50,7 +50,7 @@ def get_job(job_id):
     return jsonify({"job": job})
 
 
-@api.route("/jobs", methods=["PUT"])
+@api.route("/jobs", methods=["POST", "PUT"])
 def create_job():
     """Create a new job"""
     data = request.json
@@ -70,12 +70,6 @@ def delete_jobs():
     """Delete all jobs."""
     Job.drop_collection()
     return jsonify({"status": True})
-
-
-@api.route("/jobs/<job_id>", methods=["POST"])
-def update_job(job_id):
-    """Update a specific job."""
-    pass
 
 
 @api.route("/jobs/<job_id>", methods=["DELETE"])
