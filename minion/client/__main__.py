@@ -80,6 +80,28 @@ def job(ctx, job_id, as_json):
                 click.style(job_data["result"]["error_msg"], fg="red")))
 
 
+@cli.command()
+@click.argument("repo_url")
+@click.option("-h", "--commit-hash",
+              help="The git commit hash to test.")
+@click.option("-b", "--branch",
+              help="The git branch to test.")
+@click.option("-k", "--keep-data", flag_value=True,
+              help="If given the result data will not be deleted.")
+@click.option("-a", "--attribute", "raw_attributes", multiple=True,
+              type=(str, str),
+              help="Specify arbitrary attributes.")
+@click.pass_context
+def submit(ctx, repo_url, commit_hash, branch, keep_data, raw_attributes):
+    """Submit a new job."""
+    attributes = {a[0]: a[1] for a in raw_attributes}
+    response = ctx.obj.submit(repo_url, commit_hash, branch, keep_data, attributes)
+    if response["status"]:
+        click.echo("Submitted new job - Stay tuned for results!")
+    else:
+        click.echo("Something failed while submitting the job!")
+
+
 main = cli
 
 if __name__ == "__main__":

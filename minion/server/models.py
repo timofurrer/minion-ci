@@ -64,7 +64,7 @@ def mongo_to_dict(obj):
         elif isinstance(obj._fields[field_name], db.IntField):
             return_data.append((field_name, int(data)))
 
-        elif isinstance(obj._fields[field_name], db.ListField):
+        elif isinstance(obj._fields[field_name], (db.ListField, db.DictField)):
             return_data.append((field_name, data))
 
         elif isinstance(obj._fields[field_name], db.EmbeddedDocumentField):

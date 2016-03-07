@@ -31,3 +31,16 @@ class Client:
         """Get a single job from the minion server."""
         response = requests.get(self._build_url("jobs/{0}".format(job_id)))
         return response.json()
+
+    def submit(self, repository_url, commit_hash=None, branch=None, keep_data=None, attributes=None):
+        """Submit a new job to the minion server."""
+        data = {
+            "repo_url": repository_url,
+            "commit_hash": commit_hash,
+            "branch": branch,
+            "keep_data": keep_data,
+        }
+        if attributes:
+            data.update(attributes)
+        response = requests.put(self._build_url("jobs"), json=data)
+        return response.json()
