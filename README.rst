@@ -8,8 +8,15 @@ minion-ci
 Installation
 ------------
 
-To persist the job data *minion-ci* uses MongoDB.
+It's recommended to use pip to install minion-ci:
 
+.. code::
+
+    pip3 install minion-ci
+
+
+**MongoDB:**
+To persist the job data *minion-ci* uses MongoDB.
 Make sure you have MongoDB installed ...
 
 .. code::
@@ -28,12 +35,6 @@ Make sure you have MongoDB installed ...
 .. code::
 
     mongod
-
-It's recommended to use pip to install minion-ci:
-
-.. code::
-
-    pip3 install minion-ci
 
 Server API
 ----------
