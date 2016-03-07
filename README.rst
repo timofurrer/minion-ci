@@ -5,6 +5,9 @@ minion-ci
 
 |screenshot_index|
 
+
+.. contents::
+
 Installation
 ------------
 
