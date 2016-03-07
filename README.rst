@@ -36,6 +36,22 @@ Make sure you have MongoDB installed ...
 
     mongod
 
+minion.yml File Format
+----------------------
+
+The **minion-ci** server will clone your repository and parse a file called **minion.yml** located
+in the root of the cloned repository. The format is really simple:
+
+.. code:: yaml
+
+    # command which is run before the real command
+    before_run: "echo 'I was run before the test ...'"
+    # the test command
+    command: "echo 'This is my test...'"
+    # command which is run after the real command
+    after_run: "echo 'I was run after the test ...'"
+
+
 Server API
 ----------
 
