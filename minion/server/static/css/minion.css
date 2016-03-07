@@ -20,7 +20,6 @@ ul.jobs {
     margin-top: 50px;
 }
 
-
 li.job:first-child {
     border-top: 1px solid #A6A2A2;
 }
@@ -71,4 +70,9 @@ li.job div.result {
     padding: 20px;
     color: #777777;
     font: 14px 'Hack', 'monospace';
+}
+
+footer {
+    text-align: right;
+    font-size: 13px;
 }
