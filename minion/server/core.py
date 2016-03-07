@@ -8,16 +8,16 @@
 """
 
 import os
-import io
 import shutil
 from flask import current_app
+# from flask.ext.mongoengine import MongoEngine
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
 
-from .database import get_db
-from .models import Job, Result
+from .models import db, Job, Result
 from ..parser import parse
 from ..errors import MinionError
+
 
 class WorkersExtension:
     """A flask extension for the job queue and worker pool."""
@@ -51,7 +51,7 @@ workers = WorkersExtension()
 def worker(queue, config):
     """Single worker to process jobs from the given queue."""
     print("Launched worker:", os.getpid())
-    get_db()
+    # MongoEngine()
     while True:
         job_data = queue.get(True)
 
@@ -88,7 +88,7 @@ def process(job, config, keep_data):
         logs += tmp_stdout.decode("utf-8")
         if git_clone.returncode != 0:
             raise MinionError("Failed to clone git repository from {0} to {1}".format(
-                job.repository_url, job.local_repo_path))
+                job.repository_url, local_repo_path))
 
         if job.commit_hash:
             git_reset = Popen(["git", "reset", "--hard", job.commit_hash],

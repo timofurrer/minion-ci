@@ -9,10 +9,9 @@
 
 import os
 import datetime
+from flask.ext.mongoengine import MongoEngine
 
-from .database import get_db
-
-db = get_db()
+db = MongoEngine()
 
 
 class Result(db.EmbeddedDocument):  # pylint: disable=no-init,too-few-public-methods

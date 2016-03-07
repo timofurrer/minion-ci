@@ -11,9 +11,10 @@ import os
 import click
 import yaml
 from flask import Flask
+from flask.ext.mongoengine import MongoEngine
 
-from .database import get_db
 from .routes import api
+from .models import db
 from .core import workers
 
 # default configuration settings
@@ -37,7 +38,6 @@ except FileNotFoundError:
     pass
 
 # initialize mongodb engine for use in flask
-db = get_db()
 db.init_app(app)
 
 # initilize worker pool and job queue
