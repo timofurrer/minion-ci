@@ -24,6 +24,10 @@ class Result(db.EmbeddedDocument):  # pylint: disable=no-init,too-few-public-met
 
 class Job(db.Document):  # pylint: disable=no-init,too-few-public-methods
     """Document to store a single minion-ci job."""
+    meta = {
+                'ordering': ['-created_at']
+    }
+
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
     repository_url = db.StringField(required=True)
     commit_hash = db.StringField()

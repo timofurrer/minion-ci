@@ -7,8 +7,9 @@
     :license: MIT, see LICENSE for details
 """
 
-from flask import Blueprint, request, jsonify
+import re
 import mongoengine
+from flask import Blueprint, request, jsonify, render_template
 
 from .models import Job
 from .core import workers
@@ -19,7 +20,7 @@ api = Blueprint("api", __name__)
 @api.route("/", methods=["GET"])
 def index():
     """Serve index HTML."""
-    pass
+    return render_template("index.html", jobs=Job.objects)
 
 
 @api.route("/status", methods=["GET"])

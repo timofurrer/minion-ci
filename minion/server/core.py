@@ -105,6 +105,14 @@ def process(job, config, keep_data):
             if git_checkout.returncode != 0:
                 raise MinionError("Failed to checkout branch {0}".format(job.branch))
 
+        # get current git commit hash
+        git_rev_parse = Popen(["git", "rev-parse", "HEAD"],
+                              cwd=local_repo_path, stdout=PIPE, stderr=PIPE)
+        current_commit_hash, _ = git_rev_parse.communicate()
+        job.commit_hash = current_commit_hash.decode("utf-8")
+        if git_rev_parse.returncode != 0:
+            raise MinionError("Failed to parse current git revision")
+
         config = parse(os.path.join(local_repo_path, job.config_file))
 
         if "before_run" in config:
