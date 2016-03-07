@@ -11,7 +11,7 @@ import re
 import mongoengine
 from flask import Blueprint, request, jsonify, render_template
 
-from .models import Job
+from .models import Job, mongo_to_dict
 from .core import workers
 
 api = Blueprint("api", __name__)
@@ -40,14 +40,14 @@ def get_status():
 @api.route("/jobs", methods=["GET"])
 def get_jobs():
     """Serve list of jobs."""
-    return jsonify({"jobs": Job.objects})
+    return jsonify({"jobs": [mongo_to_dict(j) for j in Job.objects]})
 
 
 @api.route("/jobs/<job_id>", methods=["GET"])
 def get_job(job_id):
     """Serve information of specific job."""
     job = Job.objects.get(id=job_id)
-    return jsonify({"job": job})
+    return jsonify({"job": mongo_to_dict(job)})
 
 
 @api.route("/jobs", methods=["POST", "PUT"])

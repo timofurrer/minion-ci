@@ -45,7 +45,10 @@ setup(
     install_requires=list(x.name for x in parse_requirements("./requirements.txt")),
 
     entry_points={
-        "console_scripts": ["minion-server=minion.server.__main__:main"]
+        "console_scripts": [
+            "minion-server=minion.server.__main__:main",
+            "minion=minion.client.__main__:main"
+        ]
     },
 
     keywords=[

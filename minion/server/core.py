@@ -10,7 +10,6 @@
 import os
 import shutil
 from flask import current_app
-# from flask.ext.mongoengine import MongoEngine
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
 
@@ -50,8 +49,6 @@ workers = WorkersExtension()
 
 def worker(queue, config):
     """Single worker to process jobs from the given queue."""
-    print("Launched worker:", os.getpid())
-    # MongoEngine()
     while True:
         job_data = queue.get(True)
 
@@ -109,7 +106,7 @@ def process(job, config, keep_data):
         git_rev_parse = Popen(["git", "rev-parse", "HEAD"],
                               cwd=local_repo_path, stdout=PIPE, stderr=PIPE)
         current_commit_hash, _ = git_rev_parse.communicate()
-        job.commit_hash = current_commit_hash.decode("utf-8")
+        job.commit_hash = current_commit_hash.decode("utf-8").strip()
         if git_rev_parse.returncode != 0:
             raise MinionError("Failed to parse current git revision")
 
