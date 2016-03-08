@@ -1,6 +1,11 @@
 ChangeLog
 =========
 
+0.0.3
+-----
+
+- Include static files in minion-ci package
+
 0.0.2
 -----
 
