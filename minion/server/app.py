@@ -7,28 +7,16 @@
     :license: MIT, see LICENSE for details
 """
 
-import os
 import re
 import click
 import yaml
 from flask import Flask
-from flask.ext.mongoengine import MongoEngine
 from jinja2 import evalcontextfilter, Markup, escape
-import logging
 
+from .config import DefaultConfig
 from .routes import api
 from .models import db
 from .core import workers
-
-# default configuration settings
-MONGODB_SETTINGS = {
-    "db": "minion-ci",
-    "connect": False  # lazy connect
-}
-APPLICATION_DATAPATH = click.get_app_dir("minion-ci")
-JOB_DATAPATH = os.path.join(APPLICATION_DATAPATH, "jobs")
-DEFAULT_CONFIGURATION_FILE = os.path.join(APPLICATION_DATAPATH, "server-config.yml")
-LOG_FILE_PATH = os.path.join(APPLICATION_DATAPATH, "server.log")
 
 
 def parse_config(path):
@@ -37,14 +25,6 @@ def parse_config(path):
         return yaml.load(config_file)
 
 
-app = Flask(__name__)
-app.register_blueprint(api)
-app.config.from_object(__name__)
-
-logging.basicConfig(filename=LOG_FILE_PATH, level=logging.DEBUG)
-
-
-@app.template_filter()
 @evalcontextfilter
 def nl2br(eval_ctx, value):
     _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
@@ -54,13 +34,25 @@ def nl2br(eval_ctx, value):
         result = Markup(result)
     return result
 
-try:
-    app.config.update(parse_config(DEFAULT_CONFIGURATION_FILE))
-except FileNotFoundError:
-    pass
 
-# initialize mongodb engine for use in flask
-db.init_app(app)
+def create_app(name):
+    """Create flask app"""
+    app = Flask(__name__)
+    app.register_blueprint(api)
+    app.config.from_object(DefaultConfig)
 
-# initilize worker pool and job queue
-workers.init_app(app)
+    try:
+        app.config.update(parse_config(app.config["DEFAULT_CONFIGURATION_FILE"]))
+    except FileNotFoundError:
+        pass
+
+    # add required filters
+    app.jinja_env.filters["nl2br"] = nl2br
+
+    # initialize mongodb engine for use in flask
+    db.init_app(app)
+
+    # initilize worker pool and job queue
+    workers.init_app(app)
+
+    return app

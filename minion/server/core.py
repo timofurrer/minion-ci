@@ -13,7 +13,7 @@ from flask import current_app
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
 
-from .models import db, Job, Result
+from .models import Job, Result
 from ..parser import parse
 from ..errors import MinionError
 

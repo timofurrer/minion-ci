@@ -8,6 +8,7 @@
 """
 
 import click
+import logging
 
 @click.command()
 @click.option("-c", "--config",
@@ -15,7 +16,10 @@ import click
 @click.version_option()
 def main(config):
     """Manage minion-ci server."""
-    from .app import app, parse_config
+    from .app import create_app, parse_config
+
+    app = create_app("minion")
+    logging.basicConfig(filename=app.config["LOG_FILE_PATH"], level=logging.DEBUG)
 
     if config:
         app.config.update(parse_config(config))
