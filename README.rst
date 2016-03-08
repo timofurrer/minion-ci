@@ -18,7 +18,7 @@ Making your repository *minion compatible* is as easy as running this command in
 
     minion init
 
-After that you should modify the ``minion.yml`` file in your repository to fit your needs. Make a nice commit and run to start your first job:
+After that you should modify the ``minion.yml`` file in your repository to fit your needs. Make a nice commit and run the following command to start your first job:
 
 .. code::
 
