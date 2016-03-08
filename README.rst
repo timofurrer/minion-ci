@@ -9,6 +9,21 @@ minion-ci
 
 .. contents::
 
+Quickstart
+----------
+
+Making your repository *minion compatible* is as easy as running this command in the root of your repository:
+
+.. code::
+
+    minion init
+
+After that you should modify the ``minion.yml`` file in your repository to fit your needs. Make a nice commit and run to start your first job:
+
+.. code::
+
+    git minion
+
 Installation
 ------------
 

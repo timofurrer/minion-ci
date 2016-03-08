@@ -10,6 +10,8 @@
 import os
 import json
 import click
+import shutil
+import subprocess
 
 from .core import Client
 
@@ -20,6 +22,26 @@ from .core import Client
 def cli(ctx):
     """Use your minion to test your code."""
     ctx.obj = Client("127.0.0.1", 5000)
+
+
+@cli.command()
+def init():
+    """Initialize minion aliases for git repository."""
+    # check if git repository
+    if subprocess.call(["git", "status"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
+        click.echo("This is not a git repository!")
+        return 1
+
+    if os.path.exists("minion.yml"):
+        click.echo("This is already a minion repository!")
+        return
+
+    if subprocess.call(["git", "config", "alias.minion", "!minion submit ."]) != 0:
+        click.echo("Unable to add git minion alias!")
+        return 1
+
+    shutil.copyfile(os.path.join(os.path.dirname(__file__), "templates/minion.yml"), "minion.yml")
+    click.echo("Added 'git minion' alias")
 
 
 @cli.command()

@@ -1,0 +1,5 @@
+include *.rst
+include *.txt
+include minion/client/templates/minion.yml
+include CHANGELOG
+include LICENSE

@@ -1,0 +1,11 @@
+# Template file for your minion.yml
+# Rpleace the following echo commands
+# with whatever you want to execute.
+# precondition, on.success and on.failure
+# are optional.
+
+precondition: "echo 'My precondition command'"
+command: "echo 'My test command'"
+on:
+  success: "echo 'test was successful'"
+  failure: "echo 'test failed'"
