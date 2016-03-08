@@ -3,4 +3,5 @@ include *.txt
 include CHANGELOG
 include LICENSE
 include minion/client/templates/minion.yml
-recursive-include minion/server/static
+recursive-include minion/server/static *.css *.png
+recursive-include minion/server/templates *.html
