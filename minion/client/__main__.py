@@ -7,6 +7,7 @@
     :license: MIT, see LICENSE for details
 """
 
+import os
 import json
 import click
 
@@ -94,6 +95,10 @@ def job(ctx, job_id, as_json):
 @click.pass_context
 def submit(ctx, repo_url, commit_hash, branch, keep_data, raw_attributes):
     """Submit a new job."""
+    # check if given repo url is path or url
+    if os.path.exists(repo_url):  # is local path -> get absolute
+        repo_url = os.path.abspath(repo_url)
+
     attributes = {a[0]: a[1] for a in raw_attributes}
     response = ctx.obj.submit(repo_url, commit_hash, branch, keep_data, attributes)
     if response["status"]:
