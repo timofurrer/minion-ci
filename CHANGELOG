@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+0.0.2
+-----
+
+- Add minion init command
+- Support git minion alias
+- Lazy connect database
+- Log to APP_DIR/server.log
+
 0.0.1
 -----
 
