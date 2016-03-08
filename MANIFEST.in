@@ -1,5 +1,6 @@
 include *.rst
 include *.txt
-include minion/client/templates/minion.yml
 include CHANGELOG
 include LICENSE
+include minion/client/templates/minion.yml
+recursive-include minion/server/static
