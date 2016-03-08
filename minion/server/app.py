@@ -14,6 +14,7 @@ import yaml
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
 from jinja2 import evalcontextfilter, Markup, escape
+import logging
 
 from .routes import api
 from .models import db
@@ -24,15 +25,21 @@ MONGODB_SETTINGS = {"DB": "minion-ci"}
 APPLICATION_DATAPATH = click.get_app_dir("minion-ci")
 JOB_DATAPATH = os.path.join(APPLICATION_DATAPATH, "jobs")
 DEFAULT_CONFIGURATION_FILE = os.path.join(APPLICATION_DATAPATH, "server-config.yml")
+LOG_FILE_PATH = os.path.join(APPLICATION_DATAPATH, "server.log")
+
 
 def parse_config(path):
     """Parse minion-ci server configuration file."""
     with open(path) as config_file:
         return yaml.load(config_file)
 
+
 app = Flask(__name__)
 app.register_blueprint(api)
 app.config.from_object(__name__)
+
+logging.basicConfig(filename=LOG_FILE_PATH, level=logging.DEBUG)
+
 
 @app.template_filter()
 @evalcontextfilter

@@ -9,6 +9,23 @@
 
 
 import requests
+import subprocess
+from time import sleep
+
+
+def ensure_started_server(func):
+    """Ensures that the minion-ci server is started."""
+    def _wrapper(self, *args, **kwargs):
+        """decorator wrapper"""
+        try:
+            self.get_status()
+        except requests.exceptions.ConnectionError:  # server is not started
+            subprocess.Popen(["minion-server"])
+            sleep(2)
+
+        return func(self, *args, **kwargs)
+
+    return _wrapper
 
 
 class Client:
@@ -22,16 +39,24 @@ class Client:
         """Build the API URL of the given route."""
         return "{0}/{1}".format(self.base_url, route)
 
+    def get_status(self):
+        """Get status of the minion server."""
+        response = requests.get(self._build_url("status"))
+        return response.json()
+
+    @ensure_started_server
     def get_jobs(self):
         """Get all jobs from the minion server."""
         response = requests.get(self._build_url("jobs"))
         return response.json()
 
+    @ensure_started_server
     def get_job(self, job_id):
         """Get a single job from the minion server."""
         response = requests.get(self._build_url("jobs/{0}".format(job_id)))
         return response.json()
 
+    @ensure_started_server
     def submit(self, repository_url, commit_hash=None, branch=None, keep_data=None, attributes=None):
         """Submit a new job to the minion server."""
         data = {
