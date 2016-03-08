@@ -74,7 +74,12 @@ li.job div.result {
     font: 14px 'Hack', 'monospace';
 }
 
+li.job div.result .failure_red {
+    color: #A30E0E;
+}
+
 footer {
     text-align: right;
     font-size: 13px;
+    margin-bottom: 10px;
 }

@@ -112,13 +112,13 @@ def process(job, config, keep_data):
 
         config = parse(os.path.join(local_repo_path, job.config_file))
 
-        if "before_run" in config:
-            before_run = Popen(config["before_run"], shell=True,
+        if "precondition" in config:
+            before_run = Popen(config["precondition"], shell=True,
                                cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = before_run.communicate()
             logs += tmp_stdout.decode("utf-8")
             if before_run.returncode != 0:
-                raise MinionError("Failed to run before_run command: '{0}'".format(config["before_run"]))
+                raise MinionError("Failed to run precondition command: '{0}'".format(config["precondition"]))
 
         if "command" in config:
             command_run = Popen(config["command"], shell=True,
@@ -127,19 +127,28 @@ def process(job, config, keep_data):
             logs += tmp_stdout.decode("utf-8")
             if command_run.returncode != 0:
                 raise MinionError("Failed to run command: '{0}'".format(config["command"]))
-
-        if "after_run" in config:
-            after_run = Popen(config["after_run"], shell=True,
+    except MinionError as e:
+        result.error_msg = str(e)
+        result.status = False
+        if True in config and "failure" in config[True]:
+            after_run = Popen(config[True]["failure"], shell=True,
                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = after_run.communicate()
             logs += tmp_stdout.decode("utf-8")
             if after_run.returncode != 0:
-                raise MinionError("Failed to run after_run command: '{0}'".format(config["after_run"]))
-    except MinionError as e:
-        result.error_msg = str(e)
-        result.status = False
+                result.error_msg += "\n{0}".format("Failed to run failure command: '{0}'".format(
+                    config[True]["failure"]))
     else:
         result.status = True
+        if True in config and "success" in config[True]:
+            after_run = Popen(config[True]["success"], shell=True,
+                              cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
+            tmp_stdout, _ = after_run.communicate()
+            logs += tmp_stdout.decode("utf-8")
+            if after_run.returncode != 0:
+                result.error_msg = "Failed to run failure command: '{0}'".format(
+                    config[True]["failure"])
+                result.status = False
     finally:
         result.logs = logs
 

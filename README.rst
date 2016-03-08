@@ -49,11 +49,14 @@ in the root of the cloned repository. The format is really simple:
 .. code:: yaml
 
     # command which is run before the real command
-    before_run: "echo 'I was run before the test ...'"
+    precondition: "echo 'I was run before the test ...'"
     # the test command
     command: "echo 'This is my test...'"
-    # command which is run after the real command
-    after_run: "echo 'I was run after the test ...'"
+    on:
+      # command which is run if the command was successful
+      success: "echo 'I was run because the test was successful ...'"
+      # command which is run if the command failed
+      failure: "echo 'I was run because the test failed ...'"
 
 
 Server API

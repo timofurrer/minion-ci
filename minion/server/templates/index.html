@@ -40,6 +40,9 @@
                             {% endif %}
                             </div>
                             <div class="result">
+                                {% if job.result.status == False %}
+                                <strong class="failure_red">{{ job.result.error_msg }}:</strong> <br><br>
+                                {% endif %}
                                 {{ job.result.logs | nl2br }}
                             </div>
                         </li>
