@@ -21,7 +21,10 @@ from .models import db
 from .core import workers
 
 # default configuration settings
-MONGODB_SETTINGS = {"DB": "minion-ci"}
+MONGODB_SETTINGS = {
+    "db": "minion-ci",
+    "connect": False  # lazy connect
+}
 APPLICATION_DATAPATH = click.get_app_dir("minion-ci")
 JOB_DATAPATH = os.path.join(APPLICATION_DATAPATH, "jobs")
 DEFAULT_CONFIGURATION_FILE = os.path.join(APPLICATION_DATAPATH, "server-config.yml")
