@@ -8,6 +8,9 @@ minion-ci
 
 
 .. contents::
+    :local:
+    :depth: 2
+    :backlinks: none
 
 Quickstart
 ----------
@@ -73,6 +76,49 @@ in the root of the cloned repository. The format is really simple:
       # command which is run if the command failed
       failure: "echo 'I was run because the test failed ...'"
 
+minion.yml Receipts
+-------------------
+
+The following few sections explain how to setup a ``minion.yml`` file for different
+kind of environments and technologies, like python virtualenvs, docker containers, etc.
+
+Python virtualenv
+~~~~~~~~~~~~~~~~~
+
+To test your code in a python virtualenv base your minion.yml on the following example:
+
+.. code:: yaml
+
+    precondition: >
+      /bin/bash -c 'virtualenv env -p python3.4 &&
+      source env/bin/activate && python -m pip install . -r requirements-dev.txt'
+    command: /bin/bash -c 'source env/bin/activate && make test'
+
+Make sure you change the actual *test* command which in the example's case is ``make test``.
+You can also easily integrate it with ``tox``. Just make sure ``tox`` is installed and run as your
+test command.
+
+Docker
+~~~~~~
+
+To test your code in a docker container follow the following example to setup your minion.yml:
+
+.. code:: yaml
+
+    precondition: /bin/bash -c 'docker pull ubuntu'
+    command: /bin/bash -c 'docker run -t ubuntu /bin/bash -c "make test"'
+
+This will pull a new ubuntu docker image from docker hub and run ``make test`` in the container.
+You might want to setup your own docker image in the ``precondition`` and the run this container
+in the actual ``command``:
+
+.. code:: yaml
+
+    precondition: /bin/bash -c 'docker build -t testing .'
+    command: /bin/bash -c 'docker run -t testing /bin/bash -c "make test"'
+
+Make sure you mount your repository, source code, test code or whatever in the container before running
+any tests.
 
 Server API
 ----------
