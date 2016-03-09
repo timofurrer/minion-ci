@@ -82,6 +82,13 @@ minion.yml Receipts
 The following few sections explain how to setup a ``minion.yml`` file for different
 kind of environments and technologies, like python virtualenvs, docker containers, etc.
 
+**Why so complicated?** ... Well it's not really complicated, isn't it? There are just to many
+different styles of test environments and approaches ... I don't want to give full attention to all
+of them and support them.
+And anyway ... In the end your Use-Case wouldn't be supported. Thus, we provide each developer the full
+control over their own test setup and environment. Setup it up how you like and run your test how you like it.
+**But**: Here are some receipts which might help you to come up with a nice minion.yml configuration:
+
 Python virtualenv
 ~~~~~~~~~~~~~~~~~
 
