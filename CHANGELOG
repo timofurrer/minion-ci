@@ -1,11 +1,16 @@
 ChangeLog
 =========
 
+0.0.5
+-----
+
+- Implement pagination for /jobs API route
+- Implement pagination in webinterface
+
 0.0.4
 -----
 
 - Fix package
-
 
 0.0.3
 -----
