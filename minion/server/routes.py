@@ -17,10 +17,16 @@ from .core import workers
 api = Blueprint("api", __name__)
 
 
+def get_jobs_page(page=1, page_size=10):
+    """Returns all jobs from the given page."""
+    return Job.objects.paginate(page=page, per_page=page_size)
+
+
 @api.route("/", methods=["GET"])
 def index():
     """Serve index HTML."""
-    return render_template("index.html", jobs=Job.objects)
+    page = int(request.args.get("page", 1))
+    return render_template("index.html", jobs=get_jobs_page(page=page))
 
 
 @api.route("/status", methods=["GET"])
@@ -42,8 +48,7 @@ def get_jobs():
     """Serve list of jobs."""
     page = int(request.args.get("page", 1))
     page_size = int(request.args.get("pageSize", 10))
-    jobs = Job.objects.paginate(page=page, per_page=page_size)
-    return jsonify({"jobs": [mongo_to_dict(j) for j in jobs.items]})
+    return jsonify({"jobs": [mongo_to_dict(j) for j in get_jobs_page(page, page_size).items]})
 
 
 @api.route("/jobs/<job_id>", methods=["GET"])

@@ -79,7 +79,15 @@ li.job div.result .failure_red {
 }
 
 footer {
+    margin-bottom: 10px;
+}
+
+footer nav.my-pagination {
+    float: left;
+    margin-left: 40px;
+}
+
+footer div.copyright {
     text-align: right;
     font-size: 13px;
-    margin-bottom: 10px;
 }

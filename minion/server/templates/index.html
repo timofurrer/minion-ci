@@ -26,8 +26,8 @@
                 <h1>minion CI</h1>
             </header>
             <ul class="jobs">
-                {% if jobs %}
-                    {% for job in jobs %}
+                {% if jobs.items %}
+                    {% for job in jobs.items %}
                         <li class="job">
                             <span class="time">{{ job.created_at }}</span>
                             <span class="repository_url">{{ job.repository_url }}</span>
@@ -54,7 +54,23 @@
                 {% endif %}
             </ul>
             <footer>
-                <strong>minion-ci</strong>, published under MIT. A <a href="https://github.com/timofurrer" target="_blank">Timo Furrer</a> Project.
+                <nav class="my-pagination">
+                    Page:
+                    {%- for page in jobs.iter_pages() %}
+                        {% if page %}
+                            {% if page != jobs.page %}
+                                <a href="{{ url_for('api.index', page=page) }}">{{ page }}</a>
+                            {% else %}
+                                <strong>{{ page }}</strong>
+                            {% endif %}
+                        {% else %}
+                            <span class=ellipsis>…</span>
+                        {% endif %}
+                    {%- endfor %}
+                </nav>
+                <div class="copyright">
+                    <strong>minion-ci</strong>, published under MIT. A <a href="https://github.com/timofurrer" target="_blank">Timo Furrer</a> Project.
+                </div>
             </footer>
         </div>
 
