@@ -67,5 +67,5 @@ class Client:
         }
         if attributes:
             data.update(attributes)
-        response = requests.put(self._build_url("jobs"), json=data)
+        response = requests.post(self._build_url("jobs"), json=data)
         return response.json()

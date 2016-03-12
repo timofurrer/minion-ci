@@ -138,7 +138,7 @@ Server API
 | /jobs          | GET         | page,           | Get a list of all jobs   |
 |                |             | page_size       |                          |
 +----------------+-------------+-----------------+--------------------------+
-| /jobs          | PUT, POST   | repo_url,       | Create a new job         |
+| /jobs          | POST        | repo_url,       | Create a new job         |
 |                |             | commit_hash,    |                          |
 |                |             | branch,         |                          |
 |                |             | keep_data,      |                          |

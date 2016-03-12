@@ -58,7 +58,7 @@ def get_job(job_id):
     return jsonify({"job": mongo_to_dict(job)})
 
 
-@api.route("/jobs", methods=["POST", "PUT"])
+@api.route("/jobs", methods=["POST"])
 def create_job():
     """Create a new job"""
     data = request.json
