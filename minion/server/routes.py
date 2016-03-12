@@ -40,7 +40,10 @@ def get_status():
 @api.route("/jobs", methods=["GET"])
 def get_jobs():
     """Serve list of jobs."""
-    return jsonify({"jobs": [mongo_to_dict(j) for j in Job.objects]})
+    page = int(request.args.get("page", 1))
+    page_size = int(request.args.get("pageSize", 10))
+    jobs = Job.objects.paginate(page=page, per_page=page_size)
+    return jsonify({"jobs": [mongo_to_dict(j) for j in jobs.items]})
 
 
 @api.route("/jobs/<job_id>", methods=["GET"])
