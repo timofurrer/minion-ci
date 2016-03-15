@@ -140,7 +140,7 @@ def process(job, config, keep_data):
             after_run = Popen(config[True]["failure"], shell=True,
                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = after_run.communicate()
-            logs += tmp_stdout.decode("utf-8")
+            job.result.logs += tmp_stdout.decode("utf-8")
             if after_run.returncode != 0:
                 job.result.error_msg += "\n{0}".format("Failed to run failure command: '{0}'".format(
                     config[True]["failure"]))
@@ -150,7 +150,7 @@ def process(job, config, keep_data):
             after_run = Popen(config[True]["success"], shell=True,
                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = after_run.communicate()
-            logs += tmp_stdout.decode("utf-8")
+            job.result.logs += tmp_stdout.decode("utf-8")
             if after_run.returncode != 0:
                 job.result.error_msg = "Failed to run failure command: '{0}'".format(
                     config[True]["failure"])

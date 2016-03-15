@@ -39,22 +39,27 @@ li.job:hover {
 }
 
 li.job span.time {
+    display: inline-block;
+    width: 25%;
 }
 
 li.job span.repository_url {
-    margin-left: 40px;
+    margin-left: 30px;
     color: #666666;
     display: inline-block;
-    width: 40%;
+    width: 45%;
 }
 
 li.job span.revision {
+    display: inline-block;
     margin-left: 40px;
+    width: 10%;
 }
 
 li.job div.result_status {
     float: right;
     font-weight: bold;
+    width: 10%;
 }
 
 li.job span.success {
