@@ -17,9 +17,9 @@ db = MongoEngine()
 class Result(db.EmbeddedDocument):  # pylint: disable=no-init,too-few-public-methods
     """Document to store a job test result."""
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
-    status = db.BooleanField(default=False, required=True)
+    status = db.StringField(default="submitted")
     error_msg = db.StringField()
-    logs = db.StringField()
+    logs = db.StringField(default="")
 
 
 class Job(db.Document):  # pylint: disable=no-init,too-few-public-methods

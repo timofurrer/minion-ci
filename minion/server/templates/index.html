@@ -33,8 +33,10 @@
                             <span class="repository_url">{{ job.repository_url }}</span>
                             <span class="revision">{{ job.commit_hash[:7] }}</span>
                             <div class="result_status">
-                            {% if job.result.status %}
+                            {% if job.result.status == "succeded" %}
                             <span class="success">&#10003;&nbsp;SUCCESS</span>
+                            {% elif job.result.status == "running" %}
+                            <span class="running">&#8635;&nbsp;RUNNING</span>
                             {% else %}
                             <span class="failure">&#10008;&nbsp;FAILURE</span>
                             {% endif %}

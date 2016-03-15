@@ -65,6 +65,10 @@ li.job span.failure {
     color: #A30E0E;
 }
 
+li.job span.running {
+    color: #777777;
+}
+
 li.job div.result {
     display: none;
     margin-top: 20px;

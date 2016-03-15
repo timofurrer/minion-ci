@@ -58,6 +58,7 @@ def worker(queue, config):
         job.commit_hash = job_data["commit_hash"]
         job.branch = job_data["branch"]
         job.attributes = job_data["attributes"]
+        job.result = Result()
         job.save()
 
         process(job, config, job_data["keep_data"])
@@ -73,8 +74,8 @@ def process(job, config, keep_data):
             - run command
             - run after run command
     """
-    result = Result()
-    logs = ""
+    job.result.status = "running"
+    job.save()
 
     local_repo_path = os.path.join(config["JOB_DATAPATH"], str(job.id))
 
@@ -82,7 +83,7 @@ def process(job, config, keep_data):
         # clone the git repository
         git_clone = Popen(["git", "clone", job.repository_url, local_repo_path], stdout=PIPE, stderr=STDOUT)
         tmp_stdout, _ = git_clone.communicate()
-        logs += tmp_stdout.decode("utf-8")
+        job.result.logs += tmp_stdout.decode("utf-8")
         if git_clone.returncode != 0:
             raise MinionError("Failed to clone git repository from {0} to {1}".format(
                 job.repository_url, local_repo_path))
@@ -91,14 +92,16 @@ def process(job, config, keep_data):
             git_reset = Popen(["git", "reset", "--hard", job.commit_hash],
                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = git_reset.communicate()
-            logs += tmp_stdout.decode("utf-8")
+            job.result.logs += tmp_stdout.decode("utf-8")
+            job.save()
             if git_reset.returncode != 0:
                 raise MinionError("Failed to reset repository to {0}".format(job.commit_hash))
         elif job.branch:
             git_checkout = Popen(["git", "checkout", job.branch],
                                  cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = git_checkout.communicate()
-            logs += tmp_stdout.decode("utf-8")
+            job.result.logs += tmp_stdout.decode("utf-8")
+            job.save()
             if git_checkout.returncode != 0:
                 raise MinionError("Failed to checkout branch {0}".format(job.branch))
 
@@ -107,6 +110,7 @@ def process(job, config, keep_data):
                               cwd=local_repo_path, stdout=PIPE, stderr=PIPE)
         current_commit_hash, _ = git_rev_parse.communicate()
         job.commit_hash = current_commit_hash.decode("utf-8").strip()
+        job.save()
         if git_rev_parse.returncode != 0:
             raise MinionError("Failed to parse current git revision")
 
@@ -116,7 +120,8 @@ def process(job, config, keep_data):
             before_run = Popen(config["precondition"], shell=True,
                                cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = before_run.communicate()
-            logs += tmp_stdout.decode("utf-8")
+            job.result.logs += tmp_stdout.decode("utf-8")
+            job.save()
             if before_run.returncode != 0:
                 raise MinionError("Failed to run precondition command: '{0}'".format(config["precondition"]))
 
@@ -124,35 +129,33 @@ def process(job, config, keep_data):
             command_run = Popen(config["command"], shell=True,
                                 cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = command_run.communicate()
-            logs += tmp_stdout.decode("utf-8")
+            job.result.logs += tmp_stdout.decode("utf-8")
+            job.save()
             if command_run.returncode != 0:
                 raise MinionError("Failed to run command: '{0}'".format(config["command"]))
     except MinionError as e:
-        result.error_msg = str(e)
-        result.status = False
+        job.result.error_msg = str(e)
+        job.result.status = "failed"
         if True in config and "failure" in config[True]:
             after_run = Popen(config[True]["failure"], shell=True,
                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = after_run.communicate()
             logs += tmp_stdout.decode("utf-8")
             if after_run.returncode != 0:
-                result.error_msg += "\n{0}".format("Failed to run failure command: '{0}'".format(
+                job.result.error_msg += "\n{0}".format("Failed to run failure command: '{0}'".format(
                     config[True]["failure"]))
     else:
-        result.status = True
+        job.result.status = "succeded"
         if True in config and "success" in config[True]:
             after_run = Popen(config[True]["success"], shell=True,
                               cwd=local_repo_path, stdout=PIPE, stderr=STDOUT)
             tmp_stdout, _ = after_run.communicate()
             logs += tmp_stdout.decode("utf-8")
             if after_run.returncode != 0:
-                result.error_msg = "Failed to run failure command: '{0}'".format(
+                job.result.error_msg = "Failed to run failure command: '{0}'".format(
                     config[True]["failure"])
-                result.status = False
+                job.result.status = "failed"
     finally:
-        result.logs = logs
-
-        job.result = result
         job.save()
 
         if not keep_data:
