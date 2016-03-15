@@ -160,5 +160,5 @@ Server API
     :target: https://raw.githubusercontent.com/timofurrer/minion-ci/master/LICENSE
     :alt: Package license
 
-.. |screenshot_index| image:: https://raw.githubusercontent.com/timofurrer/minion-ci/master/screenshots/index.jpg
+.. |screenshot_index| image:: https://raw.githubusercontent.com/timofurrer/minion-ci/master/screenshots/index_0.0.6.jpg
     :alt: Index Page
