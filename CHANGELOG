@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+0.0.6
+-----
+
+- Fix config dir creation bug
+- Optimize css for job header
+- Implement running status
+
 0.0.5
 -----
 
