@@ -7,6 +7,7 @@
     :license: MIT, see LICENSE for details
 """
 
+import os
 import click
 import logging
 
@@ -22,11 +23,14 @@ def main(config, debug):
 
     app = create_app("minion")
 
-    if not debug:
-        logging.basicConfig(filename=app.config["LOG_FILE_PATH"], level=logging.DEBUG)
-
     if config:
         app.config.update(parse_config(config))
+
+    if not os.path.exists(app.config["APPLICATION_DATAPATH"]):
+        os.makedirs(app.config["APPLICATION_DATAPATH"])
+
+    if not debug:
+        logging.basicConfig(filename=app.config["LOG_FILE_PATH"], level=logging.DEBUG)
 
     app.run(debug=debug)
 
