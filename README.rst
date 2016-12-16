@@ -26,6 +26,8 @@ After that you should modify the ``minion.yml`` file in your repository to fit y
 .. code::
 
     git minion
+    
+If the *minion server* successfully started you can browse the web interface at http://localhost:5000
 
 Installation
 ------------
