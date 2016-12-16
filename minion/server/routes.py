@@ -12,7 +12,7 @@ import mongoengine
 from flask import Blueprint, request, jsonify, render_template
 
 from .models import Job, mongo_to_dict
-from .core import workers
+from .core import workers, stop_server
 
 api = Blueprint("api", __name__)
 
@@ -90,3 +90,8 @@ def delete_job(job_id):
     else:
         job.delete()
         return jsonify({"status": True})
+
+@api.route('/stop', methods=['POST'])
+def stop():
+    stop_server()
+    return 'Stopping server'

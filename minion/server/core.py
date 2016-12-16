@@ -9,7 +9,7 @@
 
 import os
 import shutil
-from flask import current_app
+from flask import current_app, request
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
 
@@ -160,3 +160,14 @@ def process(job, config, keep_data):
 
         if not keep_data:
             shutil.rmtree(local_repo_path)
+
+def stop_server():
+    """
+    stop the minion-server.
+    
+    This command is only used by a post request to /stop
+    """
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()

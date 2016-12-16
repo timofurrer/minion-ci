@@ -43,6 +43,10 @@ def init():
     shutil.copyfile(os.path.join(os.path.dirname(__file__), "templates/minion.yml"), "minion.yml")
     click.echo("Added 'git minion' alias")
 
+@cli.command()
+def stop():
+    """Stop the minion server"""
+    Client("127.0.0.1", 5000).stop_server()
 
 @cli.command()
 @click.option("--json", "as_json", flag_value=True,

@@ -45,6 +45,12 @@ class Client:
         return response.json()
 
     @ensure_started_server
+    def stop_server(self):
+        """stop the server by sending a postrequest to /stop"""
+        response = requests.post(self._build_url("stop"))
+        return response
+
+    @ensure_started_server
     def get_jobs(self):
         """Get all jobs from the minion server."""
         response = requests.get(self._build_url("jobs"))
