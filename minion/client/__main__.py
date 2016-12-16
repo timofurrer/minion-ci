@@ -44,9 +44,10 @@ def init():
     click.echo("Added 'git minion' alias")
 
 @cli.command()
-def stop():
+@click.pass_context
+def stop(ctx):
     """Stop the minion server"""
-    Client("127.0.0.1", 5000).stop_server()
+    ctx.obj.stop_server()
 
 @cli.command()
 @click.option("--json", "as_json", flag_value=True,
