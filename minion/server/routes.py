@@ -100,5 +100,5 @@ def stop():
 @api.errorhandler(pymongo.errors.AutoReconnect)
 def catch_autoreconnect_pymongo(error):
      """Throw error if we can't connect to mongodb"""
-    print("Can't connect or reconnect to mongodb")
-    return "Can't connect to mongodb, please make sure mongod is running", 500
+     print("Can't connect or reconnect to mongodb")
+     return "Can't connect to mongodb, please make sure mongod is running", 500
