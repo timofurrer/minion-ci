@@ -13,6 +13,7 @@ from flask import Blueprint, request, jsonify, render_template
 
 from .models import Job, mongo_to_dict
 from .core import workers, stop_server
+import pymongo
 
 api = Blueprint("api", __name__)
 
@@ -95,3 +96,9 @@ def delete_job(job_id):
 def stop():
     stop_server()
     return 'Stopping server'
+
+@api.errorhandler(pymongo.errors.AutoReconnect)
+def catch_autoreconnect_pymongo(error):
+     """Throw error if we can't connect to mongodb"""
+    print("Can't connect or reconnect to mongodb")
+    return "Can't connect to mongodb, please make sure mongod is running", 500
