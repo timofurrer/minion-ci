@@ -12,7 +12,7 @@ import mongoengine
 from flask import Blueprint, request, jsonify, render_template
 
 from .models import Job, mongo_to_dict
-from .core import workers, stop_server
+from .core import workers, stop_server, ensure_mongo
 import pymongo
 
 api = Blueprint("api", __name__)
@@ -23,6 +23,7 @@ def get_jobs_page(page=1, page_size=10):
     return Job.objects.paginate(page=page, per_page=page_size)
 
 
+@ensure_mongo
 @api.route("/", methods=["GET"])
 def index():
     """Serve index HTML."""
@@ -44,6 +45,7 @@ def get_status():
     return jsonify(status)
 
 
+@ensure_mongo
 @api.route("/jobs", methods=["GET"])
 def get_jobs():
     """Serve list of jobs."""
@@ -52,6 +54,7 @@ def get_jobs():
     return jsonify({"jobs": [mongo_to_dict(j) for j in get_jobs_page(page, page_size).items]})
 
 
+@ensure_mongo
 @api.route("/jobs/<job_id>", methods=["GET"])
 def get_job(job_id):
     """Serve information of specific job."""
@@ -59,6 +62,7 @@ def get_job(job_id):
     return jsonify({"job": mongo_to_dict(job)})
 
 
+@ensure_mongo
 @api.route("/jobs", methods=["POST"])
 def create_job():
     """Create a new job"""
@@ -74,6 +78,7 @@ def create_job():
     return jsonify({"status": True})
 
 
+@ensure_mongo
 @api.route("/jobs", methods=["DELETE"])
 def delete_jobs():
     """Delete all jobs."""
@@ -81,6 +86,7 @@ def delete_jobs():
     return jsonify({"status": True})
 
 
+@ensure_mongo
 @api.route("/jobs/<job_id>", methods=["DELETE"])
 def delete_job(job_id):
     """Delete a specific job."""
@@ -92,13 +98,14 @@ def delete_job(job_id):
         job.delete()
         return jsonify({"status": True})
 
+@ensure_mongo
 @api.route('/stop', methods=['POST'])
 def stop():
     stop_server()
     return 'Stopping server'
 
-@api.errorhandler(pymongo.errors.AutoReconnect)
-def catch_autoreconnect_pymongo(error):
+@api.errorhandler(pymongo.errors.ServerSelectionTimeoutError)
+def serverselectiontimeout_pymongo(error):
      """Throw error if we can't connect to mongodb"""
      print("Can't connect or reconnect to mongodb")
      return "Can't connect to mongodb, please make sure mongod is running", 500
