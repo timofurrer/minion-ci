@@ -33,7 +33,7 @@ class WorkersExtension:
             "queue": queue,
             "pool": pool
         }
-
+        
     @property
     def queue(self):
         """Return the job queue used by the workers."""
@@ -167,6 +167,7 @@ def stop_server():
     
     This command is only used by a post request to /stop
     """
+    workers.pool.close()
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
