@@ -152,6 +152,8 @@ Server API
 +----------------+-------------+-----------------+--------------------------+
 | /jobs/<job_id> | DELETE      |                 | Remove a single job      |
 +----------------+-------------+-----------------+--------------------------+
+| /stop          | POST        |                 | Stop the minion-server   |
++----------------+-------------+-----------------+--------------------------+
 
 
 .. |pypi| image:: https://img.shields.io/pypi/v/minion-ci.svg?style=flat&label=version
