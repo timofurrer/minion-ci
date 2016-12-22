@@ -13,6 +13,7 @@ from flask import current_app, request
 from pymongo import MongoClient, errors
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
+from functools import wraps
 
 from .models import Job, Result
 from ..parser import parse
@@ -175,13 +176,16 @@ def stop_server():
     func()
 
 def ensure_mongo(func):
+    @wraps(func)
     def func_wrapper(*args, **kwargs):
         client = MongoClient(serverSelectionTimeoutMS=500, connectTimeoutMS=500)
         try:
              # The ismaster command is cheap and does not require auth.
             client.admin.command('ismaster')
-        except errors.ServerSelectionTimeoutError:
+        except (errors.ServerSelectionTimeoutError, errors.AutoReconnect):
             return "Can't connect to mongodb, please make sure mongod is running", 500
+        else:
+            return func(*args, **kwargs)
         finally:
             client.close()
     return func_wrapper

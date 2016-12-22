@@ -17,14 +17,13 @@ import pymongo
 
 api = Blueprint("api", __name__)
 
-
 def get_jobs_page(page=1, page_size=10):
     """Returns all jobs from the given page."""
     return Job.objects.paginate(page=page, per_page=page_size)
 
 
-@ensure_mongo
 @api.route("/", methods=["GET"])
+@ensure_mongo
 def index():
     """Serve index HTML."""
     page = int(request.args.get("page", 1))
@@ -45,8 +44,8 @@ def get_status():
     return jsonify(status)
 
 
-@ensure_mongo
 @api.route("/jobs", methods=["GET"])
+@ensure_mongo
 def get_jobs():
     """Serve list of jobs."""
     page = int(request.args.get("page", 1))
@@ -54,16 +53,17 @@ def get_jobs():
     return jsonify({"jobs": [mongo_to_dict(j) for j in get_jobs_page(page, page_size).items]})
 
 
-@ensure_mongo
+
 @api.route("/jobs/<job_id>", methods=["GET"])
+@ensure_mongo
 def get_job(job_id):
     """Serve information of specific job."""
     job = Job.objects.get(id=job_id)
     return jsonify({"job": mongo_to_dict(job)})
 
 
-@ensure_mongo
 @api.route("/jobs", methods=["POST"])
+@ensure_mongo
 def create_job():
     """Create a new job"""
     data = request.json
@@ -78,16 +78,17 @@ def create_job():
     return jsonify({"status": True})
 
 
-@ensure_mongo
 @api.route("/jobs", methods=["DELETE"])
+@ensure_mongo
 def delete_jobs():
     """Delete all jobs."""
     Job.drop_collection()
     return jsonify({"status": True})
 
 
-@ensure_mongo
+
 @api.route("/jobs/<job_id>", methods=["DELETE"])
+@ensure_mongo
 def delete_job(job_id):
     """Delete a specific job."""
     try:
@@ -98,14 +99,9 @@ def delete_job(job_id):
         job.delete()
         return jsonify({"status": True})
 
-@ensure_mongo
+
 @api.route('/stop', methods=['POST'])
+@ensure_mongo
 def stop():
     stop_server()
     return 'Stopping server'
-
-@api.errorhandler(pymongo.errors.ServerSelectionTimeoutError)
-def serverselectiontimeout_pymongo(error):
-     """Throw error if we can't connect to mongodb"""
-     print("Can't connect or reconnect to mongodb")
-     return "Can't connect to mongodb, please make sure mongod is running", 500
