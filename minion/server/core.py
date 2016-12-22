@@ -9,7 +9,7 @@
 
 import os
 import shutil
-from flask import current_app, request
+from flask import current_app, request, jsonify
 from pymongo import MongoClient, errors
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
@@ -183,7 +183,7 @@ def ensure_mongo(func):
              # The ismaster command is cheap and does not require auth.
             client.admin.command('ismaster')
         except (errors.ServerSelectionTimeoutError, errors.AutoReconnect):
-            return "Can't connect to mongodb, please make sure mongod is running", 500
+            return jsonify({'data': "Can't connect to mongodb, please make sure mongod is running"}), 500
         else:
             return func(*args, **kwargs)
         finally:
