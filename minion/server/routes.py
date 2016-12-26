@@ -10,6 +10,7 @@
 import re
 import mongoengine
 from flask import Blueprint, request, jsonify, render_template
+from jinja2.exceptions import UndefinedError
 
 from .models import Job, mongo_to_dict
 from .core import workers, stop_server, ensure_mongo
@@ -17,18 +18,21 @@ import pymongo
 
 api = Blueprint("api", __name__)
 
+@ensure_mongo
 def get_jobs_page(page=1, page_size=10):
     """Returns all jobs from the given page."""
     return Job.objects.paginate(page=page, per_page=page_size)
 
 
 @api.route("/", methods=["GET"])
-@ensure_mongo
 def index():
     """Serve index HTML."""
     page = int(request.args.get("page", 1))
-    return render_template("index.html", jobs=get_jobs_page(page=page))
-
+    
+    try:
+        return render_template("index.html", jobs=get_jobs_page(page=page))
+    except UndefinedError:
+        return jsonify({'data': "Could not parse data. Ensure that MongoDB is running"}), 500
 
 @api.route("/status", methods=["GET"])
 def get_status():
