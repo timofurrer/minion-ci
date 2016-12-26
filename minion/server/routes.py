@@ -10,11 +10,10 @@
 import re
 import mongoengine
 from flask import Blueprint, request, jsonify, render_template
-from jinja2.exceptions import UndefinedError
 
 from .models import Job, mongo_to_dict
 from .core import workers, stop_server, ensure_mongo
-import pymongo
+from ..errors import MinionError
 
 api = Blueprint("api", __name__)
 
@@ -28,11 +27,7 @@ def get_jobs_page(page=1, page_size=10):
 def index():
     """Serve index HTML."""
     page = int(request.args.get("page", 1))
-    
-    try:
-        return render_template("index.html", jobs=get_jobs_page(page=page))
-    except UndefinedError:
-        return jsonify({'data': "Could not parse data. Ensure that MongoDB is running"}), 500
+    return render_template("index.html", jobs=get_jobs_page(page=page))
 
 @api.route("/status", methods=["GET"])
 def get_status():
@@ -109,3 +104,9 @@ def delete_job(job_id):
 def stop():
     stop_server()
     return 'Stopping server'
+
+@api.errorhandler(MinionError)
+def mongodb_not_runnings(error):
+    """Throw error if we can't connect to mongodb"""
+    print("Can't connect or reconnect to mongodb")
+    return jsonify({'data': "Could not parse data. Ensure that MongoDB is running"}), 500

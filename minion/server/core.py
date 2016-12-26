@@ -183,7 +183,7 @@ def ensure_mongo(func):
              # The ismaster command is cheap and does not require auth.
             client.admin.command('ismaster')
         except (errors.ServerSelectionTimeoutError, errors.AutoReconnect):
-            return jsonify({'data': "Can't connect to mongodb, please make sure mongod is running"}), 500
+            raise MinionError("Can't connect to mongodb")
         else:
             return func(*args, **kwargs)
         finally:
