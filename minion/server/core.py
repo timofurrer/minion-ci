@@ -17,7 +17,7 @@ from functools import wraps
 
 from .models import Job, Result
 from ..parser import parse
-from ..errors import MinionError
+from ..errors import MinionError, MinionMongoError
 
 
 class WorkersExtension:
@@ -183,7 +183,7 @@ def ensure_mongo(func):
              # The ismaster command is cheap and does not require auth.
             client.admin.command('ismaster')
         except (errors.ServerSelectionTimeoutError, errors.AutoReconnect):
-            raise MinionError("Can't connect to mongodb")
+            raise MinionMongoError("Can't connect to mongodb")
         else:
             return func(*args, **kwargs)
         finally:

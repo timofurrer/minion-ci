@@ -13,7 +13,7 @@ from flask import Blueprint, request, jsonify, render_template
 
 from .models import Job, mongo_to_dict
 from .core import workers, stop_server, ensure_mongo
-from ..errors import MinionError
+from ..errors import MinionMongoError
 
 api = Blueprint("api", __name__)
 
@@ -105,7 +105,7 @@ def stop():
     stop_server()
     return 'Stopping server'
 
-@api.errorhandler(MinionError)
+@api.errorhandler(MinionMongoError)
 def mongodb_not_runnings(error):
     """Throw error if we can't connect to mongodb"""
     print("Can't connect or reconnect to mongodb")
