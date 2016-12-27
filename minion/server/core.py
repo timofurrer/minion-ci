@@ -9,13 +9,15 @@
 
 import os
 import shutil
-from flask import current_app, request
+from flask import current_app, request, jsonify
+from pymongo import MongoClient, errors
 from multiprocessing import Pool, Queue
 from subprocess import Popen, PIPE, STDOUT
+from functools import wraps
 
 from .models import Job, Result
 from ..parser import parse
-from ..errors import MinionError
+from ..errors import MinionError, MinionMongoError
 
 
 class WorkersExtension:
@@ -172,3 +174,18 @@ def stop_server():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
+def ensure_mongo(func):
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        client = MongoClient(serverSelectionTimeoutMS=500, connectTimeoutMS=500)
+        try:
+             # The ismaster command is cheap and does not require auth.
+            client.admin.command('ismaster')
+        except (errors.ServerSelectionTimeoutError, errors.AutoReconnect):
+            raise MinionMongoError("Can't connect to mongodb")
+        else:
+            return func(*args, **kwargs)
+        finally:
+            client.close()
+    return func_wrapper
