@@ -11,7 +11,6 @@ import re
 import sys
 
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
 
 if sys.version_info < (3, 4, 1):
     raise RuntimeError("minion-ci requires Python 3.4.1+")
@@ -42,7 +41,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
 
-    install_requires=list(x.name for x in parse_requirements("./requirements.txt", session=False)),
+    install_requires=list(line for line in open("./requirements.txt")),
 
     entry_points={
         "console_scripts": [
